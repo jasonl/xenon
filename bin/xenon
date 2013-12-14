@@ -7,4 +7,4 @@ app = Rack::Builder.new do
   run Application.new
 end
 
-Rack::Handler::Webrick.run app, :Port => 5678
+Rack::Handler::WebRICK.run app, :Port => 5678
