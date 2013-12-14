@@ -9,4 +9,6 @@ Gem::Specification.new do |s|
   s.require_path = "lib"
   
   s.add_dependency "rack", "1.5.2"
+
+  s.executables << "xenon"
 end
