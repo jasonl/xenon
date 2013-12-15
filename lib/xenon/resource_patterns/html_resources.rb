@@ -13,10 +13,7 @@ module ResourcePatterns
         klass.class_eval(index_method_body(name))
       end
       
-      @routes[:GET] ||= {}
-      @routes[:POST] ||= {}
-      @routes[:GET][name] ||= []
-      @routes[:GET][name] = controller_name + '#' + "index"
+      routes.add_mapping(name, :GET, controller_name, "index")
     end
     
     private
