@@ -3,6 +3,8 @@
 require 'rack'
 require 'xenon'
 
+load File.join(Dir.pwd, "resources.rb")
+
 app = Rack::Builder.new do 
   run Application.new
 end
