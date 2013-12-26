@@ -3,9 +3,15 @@
 require 'rack'
 require 'xenon'
 
+Dir.glob(File.join(Dir.pwd, "models", "*.rb")).each do |file|
+  require file
+end
+
 load File.join(Dir.pwd, "resources.rb")
 
-app = Rack::Builder.new do 
+Xenon::Schema.create_tables!
+
+app = Rack::Builder.new do
   run Application.new
 end
 

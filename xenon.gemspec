@@ -7,8 +7,9 @@ Gem::Specification.new do |s|
   s.email        = "jason@jasonlangenauer.com"
   s.files        = Dir["{lib}/**/*.rb", "bin/*", "LICENSE", "*.md"]
   s.require_path = "lib"
-  
+
   s.add_dependency "rack", "1.5.2"
+  s.add_dependency "pg", "0.17.1"
 
   s.executables << "xenon"
 end
