@@ -2,6 +2,7 @@ require 'xenon/utilities'
 
 require 'xenon/schema'
 require 'xenon/database'
+require 'xenon/column'
 require 'xenon/attribute'
 require 'xenon/model'
 
