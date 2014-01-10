@@ -17,7 +17,11 @@ module ResourcePatterns
         klass.class_eval(create_method_body(name))
       end
 
-      routes.add_mapping(name, :GET, controller_name, "index")
+      unless klass.method_defined?(:show)
+        klass.class_eval(show_method_body(name))
+      end
+
+      routes.add_mapping(name, :GET, controller_name, "show")
       routes.add_mapping(name, :POST, controller_name, "create")
     end
 
@@ -44,6 +48,21 @@ def create
   @response.body << "<html>Success!</html>"
 end
 CREATE_BODY
+    end
+
+    def show_method_body(name)
+      <<-SHOW_BODY
+def show
+  #{name.downcase.chomp('s')} = #{name.capitalize.chomp('s')}.find(1)
+  @response.body << <<-BODY
+    <html>
+      <body>
+        <strong>Title</strong>\#{#{name.downcase.chomp('s')}.title}
+      </body>
+    </html>
+  BODY
+end
+SHOW_BODY
     end
   end
 end

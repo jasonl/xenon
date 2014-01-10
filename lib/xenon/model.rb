@@ -1,21 +1,44 @@
 module Xenon
   class Model
+    class << self
+      attr_reader :columns
+    end
+
     def self.inherited(subclass)
       Schema.add_model(subclass)
     end
 
     def initialize(values)
       self.class.validate_attributes_hash!(values)
-      @columns.each do |name, column|
+
+      @attributes = {}
+      self.class.columns.each do |name, column|
         @attributes[name] = Attribute.new(column, values[name])
       end
     end
 
-    def self.attribute(name, *opts)
+    def self.attribute(name, opts = {})
       puts "Adding attribute #{name}"
       @columns ||= {}
-      @columns[name] = Column.new(name, *opts)
+      column = Column.new(name, opts)
+      @columns[name] = column
       @table_name = self.name
+
+      if opts[:primary_key] == true
+        if @primary_key.nil?
+          @primary_key = column
+        else
+          raise "Attempting to define both #{@primary_key.name} and #{column.name} as primary keys"
+        end
+      end
+
+      define_method(name) do
+        @attributes[:"#{name.to_s}"].get
+      end
+
+      define_method(name.to_s + "=") do |value|
+        @attributes[:"#{name.to_s}"].set(value)
+      end
     end
 
     def self.table_name
@@ -42,6 +65,27 @@ module Xenon
       result = Database.connection.async_exec(sql)
     end
 
+    def self.find(id)
+      sql = "SELECT * FROM #{table_name} WHERE "
+      sql += Database.connection.escape_identifier(@primary_key.name)
+      sql += " = "
+      sql += Database.connection.escape_string(id.to_s)
+      sql += " LIMIT 1"
+
+      result = Database.connection.async_exec(sql)
+
+      if result.cmd_tuples == 0
+        return nil
+      else
+        new_model = self.new({})
+        puts result[0]
+        result[0].each do |key, value|
+          new_model.send(key + '=', value)
+        end
+        new_model
+      end
+    end
+
     private
     def self.validate_attributes_hash!(values)
       error_keys = values.inject([]) do |errors, (name, value)|
@@ -55,6 +99,7 @@ module Xenon
     end
 
     def self.create_table_sql
+      raise "Primary key not defined for #{self.class.name}" if @primary_key.nil?
       sql = "DROP TABLE IF EXISTS #{table_name}; "
       sql += "CREATE TABLE #{table_name} "
       sql += "("
