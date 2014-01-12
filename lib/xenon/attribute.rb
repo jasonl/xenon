@@ -7,6 +7,14 @@ module Xenon
       @value = value
     end
 
+    def column_name
+      @column.name
+    end
+
+    def type
+      @column.type
+    end
+
     def set(val)
       @value = val
     end

@@ -8,30 +8,18 @@ module Xenon
       module ClassMethods
         # Creates a new model with the supplied attributes, and returns an
         # instance of it.
-        def create(attrs)
-          validate_attributes_hash!(attrs)
-
-          sql = "INSERT INTO #{table_name} ("
-          sql += @columns.map { |name, col|
-            puts col.inspect
-            Database.connection.escape_identifier(col.name)
-          }.join(",")
-          sql += ") VALUES ("
-          sql += @columns.map { |name, col|
-            "E'" + Database.connection.escape_string(attrs[col.name] || "") + "'"
-          }.join(",")
-          sql += ")"
-
-          result = Database.connection.async_exec(sql)
+        def create(values)
+          a = new(values)
+          a.insert
         end
 
         # Reads the database row identified by the primary key, and
         # instantiates a model.
         def read(id)
           sql = "SELECT * FROM #{table_name} WHERE "
-          sql += Database.connection.escape_identifier(@primary_key.name)
+          sql += Database.quote_identifier(@primary_key.name)
           sql += " = "
-          sql += Database.connection.escape_string(id.to_s)
+          sql += Database.quote_value(id, @primary_key.type)
           sql += " LIMIT 1"
 
           result = Database.connection.async_exec(sql)
@@ -48,12 +36,17 @@ module Xenon
           end
         end
 
+        def update(id, values)
+          model = find(id)
+          id.update(values)
+        end
+
         # Deletes the database row identified by id.
         def self.delete(id)
           sql = "DELETE FROM #{table_name} WHERE "
-          sql += Database.connection.escape_identifier(@primary_key.name)
+          sql += Database.quote_identifier(@primary_key.name)
           sql += " = "
-          sql += Database.connection.escape_string(id.to_s)
+          sql += Database.quote_value(id, @primary_key.type)
 
           Database.connection.async_exec(sql)
         end

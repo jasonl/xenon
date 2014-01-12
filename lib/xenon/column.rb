@@ -11,6 +11,10 @@ module Xenon
       @opts = options.dup
     end
 
+    def type
+      @options[:type]
+    end
+
     def schema_sql_fragment
       "#{@name} #{sql_type} #{sql_constraint}"
     end

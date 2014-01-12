@@ -19,7 +19,7 @@ module Xenon
       self.class.validate_attributes_hash!(values)
 
       @attributes = {}
-      self.class.columns.each do |name, column|
+      _columns.each do |name, column|
         @attributes[name.to_sym] = Attribute.new(column, values[name])
       end
     end
@@ -64,7 +64,7 @@ module Xenon
       end
 
       if error_keys.length > 0
-        raise "Invalid attributes: #{errors.join(",")}"
+        raise "Invalid attributes: #{error_keys.join(",")}"
       end
     end
 
@@ -90,6 +90,10 @@ module Xenon
 
     def _primary_key
       self.class.primary_key
+    end
+
+    def _columns
+      self.class.columns
     end
   end
 end
