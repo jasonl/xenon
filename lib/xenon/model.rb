@@ -2,6 +2,7 @@ module Xenon
   class Model
     class << self
       attr_reader :columns
+      attr_reader :primary_key
     end
 
     def self.inherited(subclass)
@@ -13,7 +14,7 @@ module Xenon
 
       @attributes = {}
       self.class.columns.each do |name, column|
-        @attributes[name] = Attribute.new(column, values[name])
+        @attributes[name.to_sym] = Attribute.new(column, values[name])
       end
     end
 
@@ -65,7 +66,7 @@ module Xenon
       result = Database.connection.async_exec(sql)
     end
 
-    def self.find(id)
+    def self.read(id)
       sql = "SELECT * FROM #{table_name} WHERE "
       sql += Database.connection.escape_identifier(@primary_key.name)
       sql += " = "
@@ -84,6 +85,24 @@ module Xenon
         end
         new_model
       end
+    end
+
+    def self.delete(id)
+      sql = "DELETE FROM #{table_name} WHERE "
+      sql += Database.connection.escape_identifier(@primary_key.name)
+      sql += " = "
+      sql += Database.connection.escape_string(id.to_s)
+
+      Database.connection.async_exec(sql)
+    end
+
+    def delete
+      sql = "DELETE FROM #{_table_name} WHERE "
+      sql += Database.connection.escape_identifier(_primary_key.name)
+      sql += " = "
+      sql += Database.connection.escape_string(@attributes[_primary_key.name.to_sym].get)
+
+      Database.connection.async_exec(sql)
     end
 
     private
@@ -106,6 +125,20 @@ module Xenon
       sql += @columns.map { |name, attr| attr.schema_sql_fragment }.join(",")
       sql += ");"
       sql
+    end
+
+    # Instance methods
+    #-----------------------------------------------------------------------------
+
+    # These are prefixed with an underscore to minimise the pollution of the
+    # namespace, and leave it available for attribute method definitions.
+
+    def _table_name
+      self.class.table_name
+    end
+
+    def _primary_key
+      self.class.primary_key
     end
   end
 end
