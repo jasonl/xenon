@@ -11,5 +11,7 @@ Gem::Specification.new do |s|
   s.add_dependency "rack", "1.5.2"
   s.add_dependency "pg", "0.17.1"
 
+  s.add_development_dependency "rspec", "3.0.0.beta1"
+
   s.executables << "xenon"
 end

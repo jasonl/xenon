@@ -13,12 +13,14 @@ class Xenon::Database
     quote_value(attr.get, attr.type)
   end
 
-  def self.quote_value(attr, type)
+  def self.quote_value(value, type)
+    return "NULL" if value.nil?
+
     case type
     when :integer
-      attr.to_i.to_s
+      value.to_i.to_s
     when :string, :text
-      "'" + @connection.escape_string(attr.to_s) + "'"
+      "'" + @connection.escape_string(value.to_s) + "'"
     else
       raise "Unknown attribute type"
     end
