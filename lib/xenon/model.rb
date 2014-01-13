@@ -1,14 +1,16 @@
 require_relative 'model/crud_class_methods'
 require_relative 'model/crud_instance_methods'
+require_relative 'model/attributes'
 
 module Xenon
   class Model
     include CrudInstanceMethods
     include CrudClassMethods
+    include Attributes
 
     class << self
       attr_reader :columns
-      attr_reader :primary_key
+      attr_reader :_primary_key
     end
 
     def self.inherited(subclass)
@@ -21,30 +23,6 @@ module Xenon
       @attributes = {}
       _columns.each do |name, column|
         @attributes[name.to_sym] = Attribute.new(column, values[name])
-      end
-    end
-
-    def self.attribute(name, opts = {})
-      puts "Adding attribute #{name}"
-      @columns ||= {}
-      column = Column.new(name, opts)
-      @columns[name] = column
-      @table_name = self.name
-
-      if opts[:primary_key] == true
-        if @primary_key.nil?
-          @primary_key = column
-        else
-          raise "Attempting to define both #{@primary_key.name} and #{column.name} as primary keys"
-        end
-      end
-
-      define_method(name) do
-        @attributes[:"#{name.to_s}"].get
-      end
-
-      define_method(name.to_s + "=") do |value|
-        @attributes[:"#{name.to_s}"].set(value)
       end
     end
 
@@ -89,7 +67,7 @@ module Xenon
     end
 
     def _primary_key
-      self.class.primary_key
+      self.class._primary_key
     end
 
     def _columns
