@@ -48,6 +48,10 @@ module Xenon
       if @options[:type] == :foreign_key
         # sql_constraints << "REFERENCES #{other_table}(#{other_key})"
       end
+
+      if @options[:primary_key] == true
+        sql_constraints << "PRIMARY KEY"
+      end
       sql_constraints.join(" ")
     end
   end
