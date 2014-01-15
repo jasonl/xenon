@@ -11,6 +11,7 @@ module Xenon
         def create(values)
           a = new(values)
           a.insert
+          a
         end
 
         # Reads the database row identified by the primary key, and

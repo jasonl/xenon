@@ -101,6 +101,36 @@ describe Xenon::Model do
     end
   end
 
+  describe "Model.create" do
+    before do
+      Xenon::Database.connection.exec(Post.create_table_sql)
+      Xenon::Database.connection.exec("DELETE FROM #{Post.table_name}")
+    end
+
+    subject { Post.create(id: 1, title: "Test Title", body: "Test Body") }
+
+    it "should instantiate and instance and return it" do
+      expect(subject).to be_a(Post)
+    end
+
+    it "should set the attributes of the returned instance" do
+      expect(subject.id).to eq(1)
+      expect(subject.title).to eq("Test Title")
+      expect(subject.body).to eq("Test Body")
+    end
+
+    context "setting the fields of the database row" do
+      before { Post.create(id: 1, title: "Test Title", body: "Test Body") }
+      subject { Xenon::Database.connection.exec("SELECT * FROM #{Post.table_name}")[0] }
+
+      it "should set them to the values passed" do
+        expect(subject['id']).to eq("1")
+        expect(subject['title']).to eq("Test Title")
+        expect(subject['body']).to eq("Test Body")
+      end
+    end
+  end
+
   context "instance methods" do
     subject { Post.new }
 
