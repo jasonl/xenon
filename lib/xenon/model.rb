@@ -17,7 +17,7 @@ module Xenon
       Schema.add_model(subclass)
     end
 
-    def initialize(values)
+    def initialize(values = {})
       self.class.validate_attributes_hash!(values)
 
       @attributes = {}
@@ -51,7 +51,7 @@ module Xenon
       sql = "DROP TABLE IF EXISTS #{table_name}; "
       sql += "CREATE TABLE #{table_name} "
       sql += "("
-      sql += @columns.map { |name, attr| attr.schema_sql_fragment }.join(",")
+      sql += @columns.map { |name, attr| attr.schema_sql_fragment }.join(", ")
       sql += ");"
       sql
     end

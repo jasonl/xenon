@@ -16,7 +16,9 @@ module Xenon
     end
 
     def schema_sql_fragment
-      "#{@name} #{sql_type} #{sql_constraint}"
+      sql = "#{@name} #{sql_type}"
+      sql += " " + sql_constraint unless sql_constraint.length == 0
+      sql
     end
 
     private

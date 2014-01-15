@@ -7,7 +7,6 @@ module Xenon
 
       module ClassMethods
         def attribute(name, opts = {})
-          puts "Adding attribute #{name}"
           @columns ||= {}
           column = Column.new(name, opts)
           @columns[name] = column
