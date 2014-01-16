@@ -15,8 +15,12 @@ module Xenon
       @column.type
     end
 
-    def set(val)
-      @value = val
+    def set(val, requires_type_casting = false)
+      if requires_type_casting
+        @value = @column.cast_to_type(val)
+      else
+        @value = val
+      end
     end
 
     def get

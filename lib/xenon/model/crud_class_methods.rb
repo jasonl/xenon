@@ -30,7 +30,7 @@ module Xenon
           else
             new_model = self.new({})
             result[0].each do |key, value|
-              new_model.send(key + '=', value)
+              new_model.send(key + '=', value, true)
             end
             new_model
           end

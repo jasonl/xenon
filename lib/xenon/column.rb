@@ -15,6 +15,17 @@ module Xenon
       @options[:type]
     end
 
+    def cast_to_type(val)
+      case type
+      when :integer
+        val.to_i
+      when :string, :text
+        val
+      else
+        raise "Unknown type"
+      end
+    end
+
     def schema_sql_fragment
       sql = "#{@name} #{sql_type}"
       sql += " " + sql_constraint unless sql_constraint.length == 0
@@ -33,7 +44,7 @@ module Xenon
     end
 
     def sql_type
-      case @options[:type]
+      case type
       when :string then "VARCHAR(255)"
       when :text then "TEXT"
       when :integer then "INTEGER"
