@@ -12,7 +12,7 @@ module Xenon
         }.join(",")
         sql += ")"
 
-        result = Database.connection.async_exec(sql)
+        result = Database.execute(sql)
       end
 
       def update(values)
@@ -39,7 +39,7 @@ module Xenon
 
         p sql
 
-        Database.connection.async_exec(sql)
+        Database.execute(sql)
       end
 
       def delete
@@ -48,7 +48,7 @@ module Xenon
         sql += " = "
         sql += Database.quote_attribute(@attributes[_primary_key.name.to_sym])
 
-        Database.connection.async_exec(sql)
+        Database.execute(sql)
       end
     end
   end

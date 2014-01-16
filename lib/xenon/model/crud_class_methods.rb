@@ -23,7 +23,7 @@ module Xenon
           sql += Database.quote_value(id, @primary_key.type)
           sql += " LIMIT 1"
 
-          result = Database.connection.async_exec(sql)
+          result = Database.execute(sql)
 
           if result.cmd_tuples == 0
             return nil
@@ -49,7 +49,7 @@ module Xenon
           sql += " = "
           sql += Database.quote_value(id, @primary_key.type)
 
-          Database.connection.async_exec(sql)
+          Database.execute(sql)
         end
       end
     end

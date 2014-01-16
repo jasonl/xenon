@@ -31,7 +31,7 @@ module Xenon
     end
 
     def self.create_table!
-      Database.connection.exec(create_table_sql)
+      Database.execute(create_table_sql)
     end
 
     private

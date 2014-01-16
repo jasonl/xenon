@@ -5,6 +5,10 @@ class Xenon::Database
     @connection ||= connect_to_database
   end
 
+  def self.execute(sql)
+    connection.async_exec(sql)
+  end
+
   def self.quote_identifier(identifier)
     connection.escape_identifier(identifier)
   end

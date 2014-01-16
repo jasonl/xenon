@@ -70,8 +70,8 @@ describe Xenon::Model do
   describe "Model.read" do
     context "where the database row exists" do
       before do
-        Xenon::Database.connection.exec(Post.create_table_sql)
-        Xenon::Database.connection.exec("INSERT INTO #{Post.table_name} (id, title, body) VALUES (1, 'Test Title', 'Test Body');")
+        Xenon::Database.execute(Post.create_table_sql)
+        Xenon::Database.execute("INSERT INTO #{Post.table_name} (id, title, body) VALUES (1, 'Test Title', 'Test Body');")
       end
 
       subject { Post.read(1) }
@@ -89,8 +89,8 @@ describe Xenon::Model do
 
     context "where the database row doesn't exist" do
       before do
-        Xenon::Database.connection.exec(Post.create_table_sql)
-        Xenon::Database.connection.exec("DELETE FROM #{Post.table_name}")
+        Xenon::Database.execute(Post.create_table_sql)
+        Xenon::Database.execute("DELETE FROM #{Post.table_name}")
       end
 
       subject { Post.read(1) }
@@ -103,8 +103,8 @@ describe Xenon::Model do
 
   describe "Model.create" do
     before do
-      Xenon::Database.connection.exec(Post.create_table_sql)
-      Xenon::Database.connection.exec("DELETE FROM #{Post.table_name}")
+      Xenon::Database.execute(Post.create_table_sql)
+      Xenon::Database.execute("DELETE FROM #{Post.table_name}")
     end
 
     subject { Post.create(id: 1, title: "Test Title", body: "Test Body") }
@@ -121,7 +121,7 @@ describe Xenon::Model do
 
     context "setting the fields of the database row" do
       before { Post.create(id: 1, title: "Test Title", body: "Test Body") }
-      subject { Xenon::Database.connection.exec("SELECT * FROM #{Post.table_name}")[0] }
+      subject { Xenon::Database.execute("SELECT * FROM #{Post.table_name}")[0] }
 
       it "should set them to the values passed" do
         expect(subject['id']).to eq("1")
