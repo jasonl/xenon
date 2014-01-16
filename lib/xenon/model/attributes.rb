@@ -10,7 +10,6 @@ module Xenon
           @columns ||= {}
           column = Column.new(name, opts)
           @columns[name] = column
-          @table_name = self.name
 
           if opts[:primary_key] == true
             if @primary_key.nil?

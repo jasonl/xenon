@@ -27,7 +27,7 @@ module Xenon
     end
 
     def self.table_name
-      @table_name ||= self.name
+      @table_name ||= "#{self.name.downcase}s"
     end
 
     def self.create_table!
