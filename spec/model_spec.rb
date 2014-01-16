@@ -152,7 +152,7 @@ describe Xenon::Model do
       expect(subject.body).to eq("Test Body")
     end
 
-    context "changes to the database row" do
+    describe "updating the database row" do
       before { Post.update(1, title:"Modified Title") }
       subject { Xenon::Database.execute("SELECT * FROM #{Post.table_name} WHERE id = 1")[0] }
 
@@ -173,6 +173,28 @@ describe Xenon::Model do
 
     it "returns the primary key" do
       expect(subject.send(:_primary_key)).to be
+    end
+
+    describe "#update" do
+      before { Xenon::Database.execute(Post.create_table_sql) }
+      let (:post) { Post.create(id:1, title:"Test Title", body:"Test Body") }
+      subject { post.update(title:"New Title") }
+
+      it "updates the model attributes" do
+        expect(subject).to be_a(Post)
+        expect(subject.title).to eq("New Title")
+      end
+
+      describe "updating the database row" do
+        before { post.update(title:"New Title") }
+        subject { Xenon::Database.execute("SELECT * FROM #{Post.table_name} WHERE id = 1")[0] }
+
+        it "changes only those columns that have changed" do
+          expect(subject['id']).to eq("1")
+          expect(subject['title']).to eq("New Title")
+          expect(subject['body']).to eq("Test Body")
+        end
+      end
     end
   end
 end
