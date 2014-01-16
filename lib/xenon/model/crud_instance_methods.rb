@@ -25,7 +25,6 @@ module Xenon
         sql = "UPDATE #{_table_name} "
         sql += "SET "
         sql_fragments = @attributes.map do |_, attr|
-          puts @attributes.inspect
           sql_fragment = Database.quote_identifier(attr.column_name)
           sql_fragment += " = "
           sql_fragment += Database.quote_attribute(attr)

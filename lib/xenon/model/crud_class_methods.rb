@@ -37,8 +37,9 @@ module Xenon
         end
 
         def update(id, values)
-          model = find(id)
-          id.update(values)
+          model = read(id)
+          model.update(values)
+          model
         end
 
         # Deletes the database row identified by id.

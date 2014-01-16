@@ -10,7 +10,6 @@ module Xenon
 
     class << self
       attr_reader :columns
-      attr_reader :_primary_key
     end
 
     def self.inherited(subclass)
@@ -28,6 +27,10 @@ module Xenon
 
     def self.table_name
       @table_name ||= "#{self.name.downcase}s"
+    end
+
+    def self._primary_key
+      @primary_key
     end
 
     def self.create_table!

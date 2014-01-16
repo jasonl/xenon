@@ -24,7 +24,7 @@ describe Xenon::Model do
       end
 
       it "should return the primarykey" do
-        expect(subject._primary_key).to eq(subject.columns['id'])
+        expect(subject._primary_key).to eq(subject.columns[:id])
       end
     end
 
@@ -131,8 +131,48 @@ describe Xenon::Model do
     end
   end
 
+  describe "Model.update" do
+    before do
+      Xenon::Database.execute(Post.create_table_sql)
+      Post.create(id:1, title:"Test Title", body:"Test Body")
+    end
+
+    subject { Post.update(1, title:"Modified Title") }
+
+    it "should be a Post instance" do
+      expect(subject).to be_a(Post)
+    end
+
+    it "has the updated attribute" do
+      expect(subject.title).to eq("Modified Title")
+    end
+
+    it "leaves other attributes unchanged" do
+      expect(subject.id).to eq(1)
+      expect(subject.body).to eq("Test Body")
+    end
+
+    context "changes to the database row" do
+      before { Post.update(1, title:"Modified Title") }
+      subject { Xenon::Database.execute("SELECT * FROM #{Post.table_name} WHERE id = 1")[0] }
+
+      it "updates only those attributes specified" do
+        expect(subject['id']).to eq("1")
+        expect(subject['title']).to eq("Modified Title")
+        expect(subject['body']).to eq("Test Body")
+      end
+    end
+  end
+
   context "instance methods" do
     subject { Post.new }
 
+    it "returns the correct table name" do
+      expect(subject.send(:_table_name)).to eq("posts")
+    end
+
+    it "returns the primary key" do
+      expect(subject.send(:_primary_key)).to be
+    end
   end
 end
