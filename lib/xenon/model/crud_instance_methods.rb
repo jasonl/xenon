@@ -37,8 +37,6 @@ module Xenon
         sql += " = "
         sql += Database.quote_attribute(@attributes[_primary_key.name.to_sym])
 
-        p sql
-
         Database.execute(sql)
       end
 

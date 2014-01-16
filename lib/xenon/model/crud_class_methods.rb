@@ -29,7 +29,6 @@ module Xenon
             return nil
           else
             new_model = self.new({})
-            puts result[0]
             result[0].each do |key, value|
               new_model.send(key + '=', value)
             end
