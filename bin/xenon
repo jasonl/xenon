@@ -3,16 +3,18 @@
 require 'rack'
 require 'xenon'
 
-Dir.glob(File.join(Dir.pwd, "models", "*.rb")).each do |file|
+Xenon::Application.set_root(Dir.pwd)
+
+Dir.glob(File.join(Xenon::Application.root, "models", "*.rb")).each do |file|
   require file
 end
 
-load File.join(Dir.pwd, "resources.rb")
+load File.join(Xenon::Application.root, "resources.rb")
 
 Xenon::Schema.create_tables!
 
 app = Rack::Builder.new do
-  run Application.new
+  run Xenon::Application.new
 end
 
 Rack::Handler::WEBrick.run app, :Port => 5678

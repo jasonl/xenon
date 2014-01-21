@@ -1,33 +1,29 @@
-module ResourcePatterns
-  module HtmlResources
-    def html_resources(name, &block)
-      controller_name = name.capitalize + "Controller"
-      if Object.const_defined?(controller_name)
-        klass = Object.const_get(controller_name)
-      else
-        new_anon_class = Class.new(Controller)
-        klass = Object.const_set(controller_name, new_anon_class)
+module Xenon
+  module ResourcePatterns
+    module HtmlResources
+      def html_resources(name, &block)
+        controller_name = name.capitalize + "Controller"
+        klass = get_or_create_controller(controller_name)
+
+        unless klass.method_defined?(:index)
+          klass.class_eval(index_method_body(name))
+        end
+
+        unless klass.method_defined?(:create)
+          klass.class_eval(create_method_body(name))
+        end
+
+        unless klass.method_defined?(:show)
+          klass.class_eval(show_method_body(name))
+        end
+
+        routes.add_mapping(name, :GET, controller_name, "show")
+        routes.add_mapping(name, :POST, controller_name, "create")
       end
 
-      unless klass.method_defined?(:index)
-        klass.class_eval(index_method_body(name))
-      end
-
-      unless klass.method_defined?(:create)
-        klass.class_eval(create_method_body(name))
-      end
-
-      unless klass.method_defined?(:show)
-        klass.class_eval(show_method_body(name))
-      end
-
-      routes.add_mapping(name, :GET, controller_name, "show")
-      routes.add_mapping(name, :POST, controller_name, "create")
-    end
-
-    private
-    def index_method_body(name)
-      <<-INDEX_BODY
+      private
+      def index_method_body(name)
+        <<-INDEX_BODY
 def index
   @response.body << "<html>
     <body>
@@ -39,19 +35,19 @@ def index
   </html>"
 end
 INDEX_BODY
-    end
+      end
 
-    def create_method_body(name)
-      <<-CREATE_BODY
+      def create_method_body(name)
+        <<-CREATE_BODY
 def create
   #{name.capitalize.chomp('s')}.create(:title => "test")
   @response.body << "<html>Success!</html>"
 end
 CREATE_BODY
-    end
+      end
 
-    def show_method_body(name)
-      <<-SHOW_BODY
+      def show_method_body(name)
+        <<-SHOW_BODY
 def show
   #{name.downcase.chomp('s')} = #{name.capitalize.chomp('s')}.find(1)
   @response.body << <<-BODY
@@ -63,6 +59,7 @@ def show
   BODY
 end
 SHOW_BODY
+      end
     end
   end
 end

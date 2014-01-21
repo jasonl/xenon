@@ -12,8 +12,14 @@ module Xenon
       attr_reader :columns
     end
 
+    attr_reader :attributes
+
     def self.inherited(subclass)
       Schema.add_model(subclass)
+    end
+
+    def self.attribute_names
+      @columns.keys
     end
 
     def initialize(values = {})

@@ -1,6 +1,9 @@
 module Xenon
   class Application
-    extend ResourcePatterns::HtmlResources
+
+    extend ResourcePatterns::Utilities
+#    extend ResourcePatterns::HtmlResources
+    extend ResourcePatterns::HtmlResource
     @routes = RouteMap.new
 
     def self.routes
@@ -11,10 +14,20 @@ module Xenon
       self.class.routes
     end
 
+    # Set the application's root directory
+    def self.set_root(root)
+      @root = root
+    end
+
+    def self.root
+      @root
+    end
+
     def call(env)
       request = Rack::Request.new(env)
       method = request.request_method.to_sym
-      controller_name, action_name = routes.resolve_path(request.path, method, request.params)
+      action = routes.resolve_path(request.path, method, request.params)
+      controller_name, action_name = action.split("#")
       controller_klass = Object.const_get(controller_name)
       controller = controller_klass.new(request)
       if controller.respond_to?(action_name.to_sym)
