@@ -1,9 +1,5 @@
 module Xenon
   class Application
-
-    extend ResourcePatterns::Utilities
-#    extend ResourcePatterns::HtmlResources
-    extend ResourcePatterns::HtmlResource
     @routes = RouteMap.new
 
     def self.routes
@@ -37,6 +33,10 @@ module Xenon
       else
       return [404, {'Content-Type' => 'text/html'}, ["Action #{action_name} not found"]]
       end
+    end
+
+    def self.html_resource(name)
+      ResourcePatterns::HtmlResource.new(name, routes)
     end
 
     def self.define(&block)
