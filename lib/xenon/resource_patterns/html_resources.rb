@@ -61,6 +61,7 @@ module Xenon
         <<-CREATE_BODY
           def create
             @#{resource} = #{model_class_name}.create(params[:#{resource}])
+            redirect_to "/#{resources}"
           end
         CREATE_BODY
       end
@@ -79,6 +80,7 @@ module Xenon
         <<-UPDATE_BODY
           def update
             @#{resource} = #{model_class_name}.update(params[:id], params[:#{resource}])
+            redirect_to "/#{resources}"
           end
         UPDATE_BODY
       end
@@ -87,6 +89,7 @@ module Xenon
         <<-DESTROY_BODY
         def destroy
           @#{resource} = #{model_class_name}.delete(params[:id])
+          redirect_to "/#{resources}"
         end
         DESTROY_BODY
       end

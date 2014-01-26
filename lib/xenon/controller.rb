@@ -22,6 +22,11 @@ module Xenon
       end
     end
     
+    def redirect_to(url)
+      @response.body << "You are being redirected to #{url}"
+      @response.redirect(url)
+    end
+    
     private
     def symbolize_hash(hash)
       result = {}

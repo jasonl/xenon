@@ -27,7 +27,7 @@ module Xenon
         "html_resource"
       end
 
-      # GET /resource/:id
+      # GET /resource
       #--------------------------------------------------------------------------
       def show_method_body
         <<-SHOW_BODY
@@ -55,6 +55,7 @@ module Xenon
         <<-CREATE_BODY
           def create
             @#{resource} = #{model_class_name}.create(params[:#{resource}])
+            redirect_to "/#{resource}"
           end
         CREATE_BODY
       end
@@ -76,6 +77,7 @@ module Xenon
         <<-UPDATE_BODY
           def update
             @#{resource} = #{model_class_name}.update(1, params[:#{resource}])
+            redirect_to "/#{resource}"
           end
         UPDATE_BODY
       end
@@ -86,6 +88,7 @@ module Xenon
         <<-DESTROY_BODY
           def destroy
             #{model_class_name}.delete(1)
+            redirect_to "/#{resource}"
           end
         DESTROY_BODY
       end
