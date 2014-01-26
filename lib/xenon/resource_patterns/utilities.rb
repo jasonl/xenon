@@ -1,28 +1,54 @@
 module Xenon
   class ResourcePattern
-    attr_reader :name
+    attr_reader :name, :routes
 
-    def initialize(name, route_map)
+    def initialize(name, routes)
       @name = name
-      build_resource(route_map)
+      @routes = routes
+      build_resource
     end
 
-    def build_resource(route_map)
+    def build_resource
       raise "Not implemented!"
     end
 
-    def model_class
-      Object.const_get(model_name)
+    private
+
+    def resource
+      @name.chomp('s')
     end
 
-    def model_name
+    def resources
+      @name.chomp('s') + "s"
+    end
+
+    def model_class
+      Object.const_get(model_class_name)
+    end
+
+    def model_class_name
       @name.capitalize.chomp('s')
     end
 
-    def controller_name
-      @name.capitalize + "Controller"
+    def model_attributes(&block)
+      model_class.columns.each(&block)
     end
 
+    def controller_name
+      model_class_name + "Controller"
+    end
+
+    def resolver
+      Resolver
+    end
+
+    def render_internal_template(file_name)
+      template = File.read(File.join(Xenon.gem_root, "xenon", "templates", resource_pattern, file_name))
+      r = ERB.new(template, nil, "-").result(binding)
+      puts r
+      r
+    end
+    
     def get_or_create_controller(controller_name)
       if Object.const_defined?(controller_name)
         klass = Object.const_get(controller_name)

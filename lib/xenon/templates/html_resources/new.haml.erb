@@ -1,0 +1,12 @@
+%html
+  %head
+  %body
+    %form(action="/<%= name -%>" method="POST")
+<% model_class.columns.each do |name, type| -%>
+      .controls
+        %label <%= name %>
+        %input(type="text" name="<%= resource -%>[<%= name -%>]")
+<% end -%>
+      .form-actions
+        %input(type="submit" value="Save")
+      

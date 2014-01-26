@@ -1,0 +1,12 @@
+%html
+  %head
+    %title Test
+  %body
+    %form(action="/<%= resource -%>" method="POST")
+<% model_class.attribute_names.each do |attribute_name| -%>
+      .control-group
+        %label <%= attribute_name %>
+        %input(type="text" name="<%= resource %>[<%= attribute_name %>]" value=@<%= resource -%>.<%= attribute_name -%>)
+<% end %>
+      .form-actions
+        %input(type="submit" value="Save")

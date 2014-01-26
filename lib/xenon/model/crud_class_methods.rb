@@ -6,6 +6,10 @@ module Xenon
       end
 
       module ClassMethods
+        def all
+          return []
+        end
+      
         # Creates a new model with the supplied attributes, and returns an
         # instance of it.
         def create(values)

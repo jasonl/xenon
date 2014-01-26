@@ -9,7 +9,7 @@ module Xenon
     end
 
     def params
-      @request.params
+      @symbolized_params ||= symbolize_hash(@request.params)
     end
 
     def render(template_name)
@@ -20,6 +20,15 @@ module Xenon
       else
         raise "Template Not Found!"
       end
+    end
+    
+    private
+    def symbolize_hash(hash)
+      result = {}
+      hash.each do |key, value|
+        result[key.to_sym] = value.is_a?(Hash) ? symbolize_hash(value) : value
+      end
+      result
     end
   end
 end

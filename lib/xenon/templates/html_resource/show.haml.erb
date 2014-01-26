@@ -1,0 +1,9 @@
+%html
+  %head
+    %title Test
+  %body
+    %dl
+<% model_class.columns.each do |attribute_name, column| -%>
+      %dt <%= attribute_name %>
+      %dd= @<%= resource -%>.<%= attribute_name %>
+<% end -%>

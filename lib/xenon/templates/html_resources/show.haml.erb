@@ -1,0 +1,8 @@
+%html
+  %head
+  %body
+    %dl
+<% model_attributes.each do |attr_name, attribute| -%>
+      %dt <%= attr_name.to_s %>
+      %dd= @<%= resource -%>.<%= attr_name.to_s %>
+<% end -%>

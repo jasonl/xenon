@@ -14,3 +14,14 @@ require 'xenon/resource_patterns/html_resource'
 require 'xenon/route_map'
 require 'xenon/application'
 require 'xenon/controller'
+
+module Xenon
+  def self.gem_root
+    @@gem_root
+  end
+   def self.gem_root=(gem_root)
+     @@gem_root = gem_root
+   end
+end
+
+Xenon.gem_root = File.dirname(__FILE__)

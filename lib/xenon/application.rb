@@ -32,7 +32,7 @@ module Xenon
       controller_klass = Object.const_get(controller_name)
       controller = controller_klass.new(request)
       if controller.respond_to?(action_name.to_sym)
-        puts "Running #{controller_name}\"#{action_name}"
+        puts "Running #{controller_name}\##{action_name}"
         controller.send(action_name.to_sym)
         return controller.response
       else
@@ -42,6 +42,10 @@ module Xenon
 
     def self.html_resource(name)
       ResourcePatterns::HtmlResource.new(name, routes)
+    end
+
+    def self.html_resources(name)
+      ResourcePatterns::HtmlResources.new(name, routes)
     end
 
     def self.define(&block)

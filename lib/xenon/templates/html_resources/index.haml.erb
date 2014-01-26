@@ -1,0 +1,14 @@
+%html
+  %head
+  %body
+    %table
+      %thead
+        %tr
+<% model_attributes do |attr_name, attribute| -%>
+          %th <%= attr_name.to_s %>
+<% end -%>
+      %tbody
+        - @<%= resources -%>.each do |<%= resource -%>|
+<% model_attributes do |attr_name, attribute| -%>
+          %td=<%= resource -%>.<%= attr_name.to_s %>
+<% end -%>
