@@ -35,6 +35,8 @@ module Xenon
       end
 
       route.endpoint = controller + '#' + action
+      
+      Application.logger.info("Registering route: #{method} #{path} -> #{controller}##{action}")
     end
 
     def resolve_path(path, method, params)

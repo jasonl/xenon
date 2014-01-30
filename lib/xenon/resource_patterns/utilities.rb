@@ -45,7 +45,6 @@ module Xenon
     def render_internal_template(file_name)
       template = File.read(File.join(Xenon.gem_root, "xenon", "templates", resource_pattern, file_name))
       r = ERB.new(template, nil, "-").result(binding)
-      puts r
       r
     end
     

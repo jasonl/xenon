@@ -1,3 +1,5 @@
+require 'logger'
+
 module Xenon
   class Application
     @routes = RouteMap.new
@@ -19,6 +21,10 @@ module Xenon
       @root
     end
 
+    def self.logger
+      @logger ||= Logger.new(STDOUT)
+    end
+
     def call(env)
       request = Rack::Request.new(env)
       method = request.request_method.to_sym
@@ -32,7 +38,7 @@ module Xenon
       controller_klass = Object.const_get(controller_name)
       controller = controller_klass.new(request)
       if controller.respond_to?(action_name.to_sym)
-        puts "Running #{controller_name}\##{action_name}"
+        Application.logger.info("#{method.to_s.upcase} #{controller_name}\##{action_name}")
         controller.send(action_name.to_sym)
         return controller.response
       else
@@ -50,7 +56,6 @@ module Xenon
 
     def self.define(&block)
       instance_eval(&block)
-      puts routes.inspect
     end
   end
 end
