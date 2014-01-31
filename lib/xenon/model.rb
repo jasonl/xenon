@@ -39,6 +39,14 @@ module Xenon
       @primary_key
     end
 
+    # Determines if the table backing this model actually exists in the DB.
+    #
+    # @return [Boolean] true if the table exists
+    def self.table_exists?
+      result = Database.execute(table_exists_sql)
+      result[0] && result[0]["count"].to_i > 0
+    end
+
     def self.create_table!
       Database.execute(create_table_sql)
     end
@@ -53,6 +61,12 @@ module Xenon
       if error_keys.length > 0
         raise "Invalid attributes: #{error_keys.join(",")}"
       end
+    end
+
+    # Generates the SQL to test for the existence of a table. This may need to be checked
+    # that it is confined to the particular database, rather than the public schema.
+    def self.table_exists_sql
+      sql = "SELECT COUNT(*) FROM pg_class WHERE relname='#{table_name}' AND relkind='r'"
     end
 
     def self.create_table_sql

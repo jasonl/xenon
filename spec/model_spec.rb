@@ -25,6 +25,32 @@ describe Xenon::Model do
 
       it "should return the primarykey" do
         expect(subject._primary_key).to eq(subject.columns[:id])
+      end      
+    end
+
+    describe "Model.table_exists?" do
+      context "when the table exists" do
+        before do
+          expect(Xenon::Database).to receive(:execute).
+            with("SELECT COUNT(*) FROM pg_class WHERE relname='posts' AND relkind='r'").
+            and_return([{"count" => "1"}])
+        end
+        
+        it "returns true" do
+          expect(Post.table_exists?).to eq(true)
+        end
+      end
+      
+      context "when the table doesn't exist" do
+        before do
+          expect(Xenon::Database).to receive(:execute).
+            with("SELECT COUNT(*) FROM pg_class WHERE relname='posts' AND relkind='r'").
+            and_return([{"count" => "0"}])
+        end
+        
+        it "returns false" do
+          expect(Post.table_exists?).to eq(false)
+        end
       end
     end
 
