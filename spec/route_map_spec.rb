@@ -1,4 +1,4 @@
-require 'xenon'
+require 'spec_helper'
 
 describe Xenon::RouteMap do
   context "A simple route" do

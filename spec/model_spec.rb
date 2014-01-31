@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 describe Xenon::Model do
   before(:all) do
     class Post < Xenon::Model

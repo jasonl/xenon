@@ -1,4 +1,4 @@
-require 'xenon'
+require 'spec_helper'
 
 describe Xenon::Database do
   describe ".quote_identifier" do
