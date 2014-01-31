@@ -33,5 +33,7 @@ class Xenon::Database
   private
   def self.connect_to_database
     conn = PG.connect(dbname: 'xenon_development', user: 'jason')
+    conn.async_exec("SET client_min_messages TO WARNING")
+    conn
   end
 end
