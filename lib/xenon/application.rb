@@ -22,7 +22,15 @@ module Xenon
     end
 
     def self.logger
-      @logger ||= Logger.new(STDOUT)
+      @logger ||= initialize_logger
+    end
+
+    def self.initialize_logger
+      logger = Logger.new(STDOUT)
+      logger.formatter = proc do |severity, datetime, progname, msg|
+        "[#{datetime.strftime('%Y-%m-%d %H:%M:%S')}] #{severity}  #{msg}\n"
+      end
+      logger
     end
 
     def call(env)
