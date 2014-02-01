@@ -10,6 +10,15 @@ module Xenon
       @name = name.to_s
       @opts = options.dup
     end
+    
+    # Initializes a column object from the info returned by the DB.
+    #
+    # @return Xenon::Column
+    def self.initialize_from_db_tuple(tuple)
+      table_information = {}
+      table_information[:type] = db_type_to_type(tuple["type"])
+      return Column.new(tuple["name"], table_information)
+    end
 
     def type
       @options[:type]
@@ -49,6 +58,14 @@ module Xenon
       when :text then "TEXT"
       when :integer then "INTEGER"
       when :foreign_key then "INTEGER" #TODO: this should pick type
+      end
+    end
+
+    def self.db_type_to_type(_type)
+      case _type
+      when "varchar" then :string
+      when "text" then :text
+      when "int4" then :integer
       end
     end
 

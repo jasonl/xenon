@@ -22,6 +22,7 @@ module Xenon
       
       models_with_tables.each do |model|
         Application.logger.info "Using existing table '#{model.table_name}' for #{model.name}"
+        model.table_information
       end
     end
   end

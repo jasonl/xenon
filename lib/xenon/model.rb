@@ -47,6 +47,14 @@ module Xenon
       result[0] && result[0]["count"].to_i > 0
     end
 
+    # Returns information about the table as it exists in the DB.
+    #
+    # @return [Xenon::Column] with details of the columns. No guarantees as to column order.
+    def self.table_information
+      result = Database.execute(table_information_sql)
+      result.map { |tuple| Column.initialize_from_db_tuple(tuple) }
+    end
+
     def self.create_table!
       Database.execute(create_table_sql)
     end
@@ -67,6 +75,31 @@ module Xenon
     # that it is confined to the particular database, rather than the public schema.
     def self.table_exists_sql
       sql = "SELECT COUNT(*) FROM pg_class WHERE relname='#{table_name}' AND relkind='r'"
+    end
+
+    # Generates the SQL to return the column information for the table. Again, this is
+    # not scoped to a particular schema.
+    def self.table_information_sql
+      <<-SQL
+      SELECT
+              a.attname AS name,
+              CASE 
+                  WHEN atttypmod = -1 THEN null       
+                  ELSE (atttypmod - 4) & 65535            -- calculate the scale  
+              END AS size,
+              t.typname AS type,
+              CASE WHEN a.attnotnull = 't' THEN 't' ELSE 'f' END AS not_null,
+              CASE WHEN r.contype = 'p' THEN 't' ELSE 'f' END AS primary_key
+      FROM
+              pg_class c 
+              JOIN pg_attribute a ON a.attrelid = c.oid
+              JOIN pg_type t ON a.atttypid = t.oid
+              LEFT JOIN pg_catalog.pg_constraint r ON c.oid = r.conrelid 
+                      AND r.conname = a.attname
+      WHERE
+              c.relname = '#{table_name}'
+              AND a.attnum > 0
+      SQL
     end
 
     def self.create_table_sql
