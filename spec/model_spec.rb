@@ -56,6 +56,32 @@ describe Xenon::Model do
       end
     end
 
+    describe "Model.create_table" do
+      it "executes the correct SQL to create the table" do
+        expect(Xenon::Database).to receive(:execute).
+          with("CREATE TABLE posts (id INTEGER PRIMARY KEY, title VARCHAR(255), body TEXT);")
+        Post.create_table
+      end
+    end
+    
+    describe "Model.add_column" do
+      let(:column) { Xenon::Column.new("test_col", :type => :string) }
+      
+      it "executes the correct SQL to add a column" do
+        expect(Xenon::Database).to receive(:execute).
+          with("ALTER TABLE posts ADD COLUMN test_col VARCHAR(255)")
+        Post.add_column(column)
+      end
+    end
+
+    describe "Model.drop_column" do
+      it "executes the correct SQL to drop a column" do
+        expect(Xenon::Database).to receive(:execute).
+          with("ALTER TABLE posts DROP COLUMN test_col")
+        Post.drop_column("test_col")
+      end
+    end
+
     context "Instantiation" do
       it "should be able to be instantiated without parameters" do
         expect(Post.new).to be_a(Post)
@@ -88,16 +114,12 @@ describe Xenon::Model do
     end
   end
 
-  describe "Model.create_table_sql" do
-    subject { Post.create_table_sql }
-    it "should generate the correct SQL to create the table" do
-      expect(subject).to eq("DROP TABLE IF EXISTS posts; CREATE TABLE posts (id INTEGER PRIMARY KEY, title VARCHAR(255), body TEXT);")
-    end
-  end
+
 
   describe "Model.read" do
     context "where the database row exists" do
       before do
+        Xenon::Database.execute("DROP TABLE IF EXISTS #{Post.table_name}")
         Xenon::Database.execute(Post.create_table_sql)
         Xenon::Database.execute("INSERT INTO #{Post.table_name} (id, title, body) VALUES (1, 'Test Title', 'Test Body');")
       end
@@ -117,6 +139,7 @@ describe Xenon::Model do
 
     context "where the database row doesn't exist" do
       before do
+        Xenon::Database.execute("DROP TABLE IF EXISTS #{Post.table_name}")
         Xenon::Database.execute(Post.create_table_sql)
         Xenon::Database.execute("DELETE FROM #{Post.table_name}")
       end
@@ -131,6 +154,7 @@ describe Xenon::Model do
 
   describe "Model.create" do
     before do
+      Xenon::Database.execute("DROP TABLE IF EXISTS #{Post.table_name}")
       Xenon::Database.execute(Post.create_table_sql)
       Xenon::Database.execute("DELETE FROM #{Post.table_name}")
     end
@@ -161,6 +185,7 @@ describe Xenon::Model do
 
   describe "Model.update" do
     before do
+      Xenon::Database.execute("DROP TABLE IF EXISTS #{Post.table_name}")
       Xenon::Database.execute(Post.create_table_sql)
       Post.create(id:1, title:"Test Title", body:"Test Body")
     end
@@ -204,8 +229,12 @@ describe Xenon::Model do
     end
 
     describe "#update" do
-      before { Xenon::Database.execute(Post.create_table_sql) }
-      let (:post) { Post.create(id:1, title:"Test Title", body:"Test Body") }
+      before do
+        Xenon::Database.execute("DROP TABLE IF EXISTS #{Post.table_name}")
+        Xenon::Database.execute(Post.create_table_sql)
+      end
+      
+      let(:post) { Post.create(id:1, title:"Test Title", body:"Test Body") }
       subject { post.update(title:"New Title") }
 
       it "updates the model attributes" do
