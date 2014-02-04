@@ -11,8 +11,11 @@ module Xenon
           Database.quote_attribute(attr)
         }.join(",")
         sql += ")"
+        sql += " RETURNING " + Database.quote_identifier(_primary_key.name)
 
         result = Database.execute(sql)
+        self.send(_primary_key.name.to_s + '=', result[0][_primary_key.name.to_s])
+        self
       end
 
       def update(values)

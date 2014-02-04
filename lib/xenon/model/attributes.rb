@@ -23,7 +23,7 @@ module Xenon
             @attributes[:"#{name.to_s}"].get
           end
 
-          define_method(name.to_s + "=") do |value, requires_cast|
+          define_method(name.to_s + "=") do |value, requires_cast = true|
             @attributes[:"#{name.to_s}"].set(value, requires_cast)
           end
         end
