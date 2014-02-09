@@ -45,7 +45,7 @@ module Xenon
 
         def primary_key(name, options = {})
           options = options.dup
-          options[:type] ||= :integer
+          options[:type] ||= :bigserial
           options[:primary_key] = true
           attribute(name, options)
         end

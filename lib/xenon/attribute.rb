@@ -1,10 +1,11 @@
 module Xenon
   class Attribute
-    attr_reader :column
+    attr_reader :column, :dirty
 
     def initialize(column, value)
       @column = column
       @value = value
+      @dirty = false
     end
 
     def column_name
@@ -21,10 +22,15 @@ module Xenon
       else
         @value = val
       end
+      @dirty = true
     end
 
     def get
       @value
+    end
+
+    def reset
+      @dirty = false
     end
   end
 end

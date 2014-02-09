@@ -9,7 +9,7 @@ module Xenon
         def all
           return []
         end
-      
+
         # Creates a new model with the supplied attributes, and returns an
         # instance of it.
         def create(values)
@@ -36,6 +36,7 @@ module Xenon
             result[0].each do |key, value|
               new_model.send(key + '=', value, true)
             end
+            new_model.attributes.each { |attr| attr.reset }
             new_model
           end
         end

@@ -3,11 +3,11 @@ module Xenon
     module CrudInstanceMethods
       def insert
         sql = "INSERT INTO #{_table_name} ("
-        sql += @attributes.map { |_, attr|
+        sql += _dirty_attributes.map { |attr|
           Database.quote_identifier(attr.column_name)
         }.join(",")
         sql += ") VALUES ("
-        sql += @attributes.map { |_, attr|
+        sql += _dirty_attributes.map { |attr|
           Database.quote_attribute(attr)
         }.join(",")
         sql += ")"
@@ -15,6 +15,7 @@ module Xenon
 
         result = Database.execute(sql)
         self.send(_primary_key.name.to_s + '=', result[0][_primary_key.name.to_s])
+        @attributes.each { |attr| attr.reset }
         self
       end
 
@@ -40,6 +41,7 @@ module Xenon
         sql += Database.quote_attribute(@attributes[_primary_key.name.to_sym])
 
         Database.execute(sql)
+        @attributes.each { |attr| attr.reset }
         self
       end
 

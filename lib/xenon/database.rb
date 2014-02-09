@@ -21,7 +21,7 @@ class Xenon::Database
     return "NULL" if value.nil?
 
     case type
-    when :integer
+    when :integer, :bigserial
       value.to_i.to_s
     when :string, :text
       "'" + @connection.escape_string(value.to_s) + "'"

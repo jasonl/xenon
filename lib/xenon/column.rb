@@ -2,7 +2,7 @@ module Xenon
   class Column
     attr_reader :name, :primary_key, :type
 
-    TYPES = [:string, :text, :integer, :foreign_key]
+    TYPES = [:string, :text, :integer, :bigserial, :foreign_key]
 
     def initialize(name, *options)
       @options = options.extract_options!.dup
@@ -33,7 +33,7 @@ module Xenon
 
     def cast_to_type(val)
       case type
-      when :integer
+      when :integer, :bigserial
         val.to_i
       when :string, :text
         val
@@ -64,6 +64,7 @@ module Xenon
       when :string then "VARCHAR(255)"
       when :text then "TEXT"
       when :integer then "INTEGER"
+      when :bigserial then "BIGSERIAL"
       when :foreign_key then "INTEGER" #TODO: this should pick type
       end
     end
@@ -73,6 +74,7 @@ module Xenon
       when "varchar" then :string
       when "text" then :text
       when "int4" then :integer
+      when "int8" then :integer
       end
     end
 

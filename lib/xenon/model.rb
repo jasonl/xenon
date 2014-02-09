@@ -70,5 +70,9 @@ module Xenon
     def _columns
       self.class.columns
     end
+
+    def _dirty_attributes
+      @attributes.select { |_, attr| attr.dirty }.values
+    end
   end
 end
